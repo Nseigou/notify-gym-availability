@@ -31,7 +31,7 @@ async function getGymStatus() {
   }]
   // chromeを起動する
   const browser = await puppeteer.launch({
-    headless: false, // ブラウザを表示する
+    headless: true, // ブラウザを表示する
     channel: 'chrome',
     args: [
       '--disable-blink-features=AutomationControlled', // ←検出回避のため
@@ -80,7 +80,7 @@ async function getGymStatus() {
   await page.waitForNavigation({ waitUntil: ['networkidle2', 'load'] });
 
   // 空き状況一覧ページをスクレイピング
-  await page.evaluate((selectedArea) => {
+  const returnGymTables = await page.evaluate((selectedArea) => {
     const facilityTables = Array.from(document.querySelectorAll("div.item_body div.item"))
     const gymTables = facilityTables.map(item => {
       const facility = item.querySelector("h3").innerText.trim().split(/\s|　/)[0];
@@ -97,7 +97,7 @@ async function getGymStatus() {
         }).filter(time => time !== null);
         const allArea = Array.from(statusTables[index].querySelectorAll("tbody tr"));
         const validStatus = allArea.map(tr => {
-          areaName = tr.querySelector("td.shisetsu").innerText
+          const areaName = tr.querySelector("td.shisetsu").innerText
           if (selectedArea.some(a =>
             a.facility === facility && 
             a.place === place.innerText.replace(/【.*$/, '') && 
@@ -126,14 +126,38 @@ async function getGymStatus() {
       }
     })
     console.log(gymTables)
-    // gymTables.forEach(gymTable => {
-    //   const gymName = gymTable.facility
-    //   gymTable.tables.forEach
-    // })
+    return gymTables;
   }, selectedArea);
+  await browser.close();
 
-    // await browser.close();
-    // return null;
+  for (const gymTable of returnGymTables) {
+    const gymName = gymTable.facility
+    await sendMessage(`${gymName}の空き状況をお知らせします。`);
+    for (const placeTable of gymTable.tables) {
+      const message = [];
+      message.push(`${placeTable.place}⛹️‍♂️`);
+      placeTable.placeStatusTable.forEach(areaStatus => {
+        message.push(`【${areaStatus.areaName}】`);
+        let flag = false;
+        areaStatus.validStatusList.forEach((status, index) => {
+          if (status == "○") {
+            message.push(placeTable.reservationTimes[index]);
+            flag = true;
+          }
+        });
+        if (!flag){
+          message.push("本日は空いていません");
+        }
+      })
+      // console.log(message);
+      try {
+        await sendMessage(message.join("\n"));
+      }
+      catch (err) {
+        console.error("Error sending message:", err);
+      }
+    }
+  }
 }
 
 async function sendMessage(message) {
@@ -157,5 +181,9 @@ async function sendMessage(message) {
 
 
 getGymStatus()
-// makeMessage()
-// sendMessage("体育館の空き状況を知らせるぜ！")
+  .then(() => {
+    console.log("メッセージの送信まで成功しました");
+  })
+  .catch((error) => {
+    console.error("途中でエラーが発生しました:", error);
+  });
