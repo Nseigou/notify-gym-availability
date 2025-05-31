@@ -9,10 +9,19 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
+    "@sparticuz/chromium": "^133.0.0",
     "dotenv": "^16.5.0",
     "node-fetch": "^3.3.2",
-    "puppeteer": "^24.6.1"
-  }
+    "puppeteer-core": "^24.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nseigou/notify-gym-availability.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Nseigou/notify-gym-availability/issues"
+  },
+  "homepage": "https://github.com/Nseigou/notify-gym-availability#readme",
+  "description": ""
 }
