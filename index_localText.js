@@ -1,7 +1,7 @@
 import chromium from '@sparticuz/chromium';
 import puppeteer from 'puppeteer-core';
-// import dotenv from 'dotenv';
-// dotenv.config(); // 環境変数の読み込み
+import dotenv from 'dotenv';
+dotenv.config(); // 環境変数の読み込み
 
 // 環境変数からLINEの情報を取得
 const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
@@ -238,17 +238,17 @@ async function sendMessage(messageText) {
   }
 }
 
-// async function localTest() {
-//   console.log("ローカルテストを開始します...");
-//   try {
-//     // Lambdaに渡されるeventオブジェクトを模倣 (今回は使っていないので空でもOK)
-//     const mockEvent = {}; 
-//     const result = await handler(mockEvent);
-//     console.log("ローカルテスト完了:", result);
-//   } catch (error) {
-//     console.error("ローカルテスト中にエラーが発生しました:", error);
-//   }
-// }
+async function localTest() {
+  console.log("ローカルテストを開始します...");
+  try {
+    // Lambdaに渡されるeventオブジェクトを模倣 (今回は使っていないので空でもOK)
+    const mockEvent = {}; 
+    const result = await handler(mockEvent);
+    console.log("ローカルテスト完了:", result);
+  } catch (error) {
+    console.error("ローカルテスト中にエラーが発生しました:", error);
+  }
+}
 
-// localTest();
+localTest();
 
