@@ -199,31 +199,31 @@ async function getGymStatus() {
 }
 
 async function sendMessage(messageText) {
-  if (!token || !userId || !groupId) {
+  if (!token || !groupId) {
     throw new Error("LINE APIの認証情報が不足しています。");
   }
 
-  const response = await fetch("https://api.line.me/v2/bot/message/push", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
-    body: JSON.stringify({
-      to: userId,
-      messages: [
-        {
-          type: "text",
-          text: messageText,
-        },
-      ],
-    }),
-  });
+  // const response = await fetch("https://api.line.me/v2/bot/message/push", {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     "Authorization": `Bearer ${token}`
+  //   },
+  //   body: JSON.stringify({
+  //     to: userId,
+  //     messages: [
+  //       {
+  //         type: "text",
+  //         text: messageText,
+  //       },
+  //     ],
+  //   }),
+  // });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`LINE APIリクエスト失敗: ${response.status} - ${JSON.stringify(errorData)}`);
-  }
+  // if (!response.ok) {
+  //   const errorData = await response.json();
+  //   throw new Error(`LINE APIリクエスト失敗: ${response.status} - ${JSON.stringify(errorData)}`);
+  // }
 
   const response2 = await fetch ("https://api.line.me/v2/bot/message/push", {
     method: "POST",
@@ -236,7 +236,7 @@ async function sendMessage(messageText) {
         messages: [
           {
             type: "text",
-            text: message,
+            text: messageText,
           },
         ],
     }),
