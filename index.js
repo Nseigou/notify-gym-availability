@@ -166,7 +166,7 @@ async function getGymStatus() {
             messageLines.push("対象エリアの情報がありませんでした。");
         } else {
             placeTable.placeStatusTable.forEach(areaStatus => {
-                messageLines.push(`【${areaStatus.areaName}】`);
+                messageLines.push(`\n【${areaStatus.areaName}】`);
                 let availableSlots = false;
                 areaStatus.validStatusList.forEach((status, index) => {
                     if (status === "○") { // "○" で空きを示すと仮定
@@ -177,7 +177,7 @@ async function getGymStatus() {
                     }
                 });
                 if (!availableSlots) {
-                    messageLines.push("本日は空いていません");
+                    messageLines.push("空きなし");
                 }
             });
         }
