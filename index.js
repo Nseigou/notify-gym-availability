@@ -3,7 +3,7 @@ import puppeteer from 'puppeteer-core';
 
 // Lambda環境ではdotenv不要。環境変数はマネジメントコンソールやSAM/Serverlessで設定
 const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
-const userId = process.env.LINE_USER_ID;
+// const userId = process.env.LINE_USER_ID;
 const groupId = process.env.LINE_GROUP_ID;
 
 export const handler = async (event) => {
