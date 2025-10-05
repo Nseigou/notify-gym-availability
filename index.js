@@ -2,8 +2,9 @@ import puppeteer from 'puppeteer';
 import dotenv from 'dotenv';
 
 dotenv.config();
-const token = process.env.LINE_CHANNEL_ACCESS_TOKEN
-const userId = process.env.LINE_USER_ID
+const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+const userId = process.env.LINE_USER_ID;
+const groupId = process.env.LINE_GROUP_ID;
 
 
 async function getGymStatus() {
@@ -31,7 +32,7 @@ async function getGymStatus() {
   }]
   // chromeを起動する
   const browser = await puppeteer.launch({
-    headless: true, // ブラウザを表示する
+    headless: false, // ブラウザを表示する
     channel: 'chrome',
     args: [
       '--disable-blink-features=AutomationControlled', // ←検出回避のため
@@ -177,6 +178,23 @@ async function sendMessage(message) {
             ],
         }),
     });
+    await fetch ("https://api.line.me/v2/bot/message/push", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }, 
+        body: JSON.stringify({
+            to: groupId,
+            messages: [
+              {
+                type: "text",
+                text: message,
+              },
+            ],
+        }),
+    });
+
 }
 
 
