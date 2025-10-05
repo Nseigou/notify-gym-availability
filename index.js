@@ -4,6 +4,7 @@ import puppeteer from 'puppeteer-core';
 // Lambda環境ではdotenv不要。環境変数はマネジメントコンソールやSAM/Serverlessで設定
 const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const userId = process.env.LINE_USER_ID;
+const groupId = process.env.LINE_GROUP_ID;
 
 export const handler = async (event) => {
   try {
@@ -223,4 +224,21 @@ async function sendMessage(messageText) {
     const errorData = await response.json();
     throw new Error(`LINE APIリクエスト失敗: ${response.status} - ${JSON.stringify(errorData)}`);
   }
+
+  await fetch ("https://api.line.me/v2/bot/message/push", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }, 
+        body: JSON.stringify({
+            to: groupId,
+            messages: [
+              {
+                type: "text",
+                text: message,
+              },
+            ],
+        }),
+    });
 }

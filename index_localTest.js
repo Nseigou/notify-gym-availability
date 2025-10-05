@@ -6,6 +6,7 @@ dotenv.config(); // 環境変数の読み込み
 // 環境変数からLINEの情報を取得
 const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const userId = process.env.LINE_USER_ID;
+const groupId = process.env.LINE_GROUP_ID;
 
 export const handler = async (event) => {
   try {
@@ -236,6 +237,22 @@ async function sendMessage(messageText) {
     // エラーを再スローするか、適切に処理する
     throw err;
   }
+  await fetch ("https://api.line.me/v2/bot/message/push", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }, 
+        body: JSON.stringify({
+            to: groupId,
+            messages: [
+              {
+                type: "text",
+                text: message,
+              },
+            ],
+        }),
+    });
 }
 
 async function localTest() {
