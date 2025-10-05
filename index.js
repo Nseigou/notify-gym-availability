@@ -28,7 +28,7 @@ async function getGymStatus() {
   {
     facility: "大輪体育館",
     place: "競技場",
-    area: ["全面"]
+    area: ["全面", "１／３"]
   }]
   // chromeを起動する
   const browser = await puppeteer.launch({
@@ -138,7 +138,7 @@ async function getGymStatus() {
       const message = [];
       message.push(`${placeTable.place}⛹️‍♂️`);
       placeTable.placeStatusTable.forEach(areaStatus => {
-        message.push(`【${areaStatus.areaName}】`);
+        message.push(`\n【${areaStatus.areaName}】`);
         let flag = false;
         areaStatus.validStatusList.forEach((status, index) => {
           if (status == "○") {
@@ -147,7 +147,7 @@ async function getGymStatus() {
           }
         });
         if (!flag){
-          message.push("本日は空いていません");
+          message.push("空きなし");
         }
       })
       // console.log(message);
