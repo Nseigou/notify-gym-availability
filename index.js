@@ -34,7 +34,7 @@ async function getGymStatus() {
   const selectedArea = [
     { facility: "パークアリーナ小牧", place: "メインアリーナ", area: ["全面", "２／３", "１／３"] },
     { facility: "パークアリーナ小牧", place: "サブアリーナ", area: ["全面", "半面"] },
-    { facility: "大輪体育館", place: "競技場", area: ["全面"] }
+    { facility: "大輪体育館", place: "競技場", area: ["全面", "１／３"] }
   ];
 
   let browser = null; // browserをtryの外で宣言
