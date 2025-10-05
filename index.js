@@ -3,7 +3,8 @@ import puppeteer from 'puppeteer-core';
 
 // Lambda環境ではdotenv不要。環境変数はマネジメントコンソールやSAM/Serverlessで設定
 const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
-const userId = process.env.LINE_USER_ID;
+// const userId = process.env.LINE_USER_ID;
+const groupId = process.env.LINE_GROUP_ID;
 
 export const handler = async (event) => {
   try {
@@ -33,7 +34,7 @@ async function getGymStatus() {
   const selectedArea = [
     { facility: "パークアリーナ小牧", place: "メインアリーナ", area: ["全面", "２／３", "１／３"] },
     { facility: "パークアリーナ小牧", place: "サブアリーナ", area: ["全面", "半面"] },
-    { facility: "大輪体育館", place: "競技場", area: ["全面"] }
+    { facility: "大輪体育館", place: "競技場", area: ["全面", "１／３"] }
   ];
 
   let browser = null; // browserをtryの外で宣言
@@ -165,7 +166,7 @@ async function getGymStatus() {
             messageLines.push("対象エリアの情報がありませんでした。");
         } else {
             placeTable.placeStatusTable.forEach(areaStatus => {
-                messageLines.push(`【${areaStatus.areaName}】`);
+                messageLines.push(`\n【${areaStatus.areaName}】`);
                 let availableSlots = false;
                 areaStatus.validStatusList.forEach((status, index) => {
                     if (status === "○") { // "○" で空きを示すと仮定
@@ -176,7 +177,7 @@ async function getGymStatus() {
                     }
                 });
                 if (!availableSlots) {
-                    messageLines.push("本日は空いていません");
+                    messageLines.push("空きなし");
                 }
             });
         }
@@ -198,29 +199,50 @@ async function getGymStatus() {
 }
 
 async function sendMessage(messageText) {
-  if (!token || !userId) {
+  if (!token || !groupId) {
     throw new Error("LINE APIの認証情報が不足しています。");
   }
 
-  const response = await fetch("https://api.line.me/v2/bot/message/push", {
+  // const response = await fetch("https://api.line.me/v2/bot/message/push", {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     "Authorization": `Bearer ${token}`
+  //   },
+  //   body: JSON.stringify({
+  //     to: userId,
+  //     messages: [
+  //       {
+  //         type: "text",
+  //         text: messageText,
+  //       },
+  //     ],
+  //   }),
+  // });
+
+  // if (!response.ok) {
+  //   const errorData = await response.json();
+  //   throw new Error(`LINE APIリクエスト失敗: ${response.status} - ${JSON.stringify(errorData)}`);
+  // }
+
+  const response2 = await fetch ("https://api.line.me/v2/bot/message/push", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+    }, 
     body: JSON.stringify({
-      to: userId,
-      messages: [
-        {
-          type: "text",
-          text: messageText,
-        },
-      ],
+        to: groupId,
+        messages: [
+          {
+            type: "text",
+            text: messageText,
+          },
+        ],
     }),
   });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`LINE APIリクエスト失敗: ${response.status} - ${JSON.stringify(errorData)}`);
+  if (!response2.ok) {
+    const errorData = await response2.json();
+    throw new Error(`LINE APIリクエスト失敗: ${response2.status} - ${JSON.stringify(errorData)}`);
   }
 }
